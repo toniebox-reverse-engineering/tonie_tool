@@ -47,6 +47,7 @@
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.btnDown = new System.Windows.Forms.Button();
             this.btnUp = new System.Windows.Forms.Button();
+            this.cmbSorting = new System.Windows.Forms.ComboBox();
             this.lstTracks = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -114,6 +115,7 @@
             // 
             this.splitContainer2.Panel1.Controls.Add(this.btnDown);
             this.splitContainer2.Panel1.Controls.Add(this.btnUp);
+            this.splitContainer2.Panel1.Controls.Add(this.cmbSorting);
             // 
             // splitContainer2.Panel2
             // 
@@ -143,6 +145,20 @@
             this.btnUp.Text = "Up";
             this.btnUp.UseVisualStyleBackColor = true;
             this.btnUp.Click += new System.EventHandler(this.btnUp_Click);
+            // 
+            // cmbSorting
+            // 
+            this.cmbSorting.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbSorting.FormattingEnabled = true;
+            this.cmbSorting.Items.AddRange(new object[] {
+            "Track",
+            "Filename"});
+            this.cmbSorting.Location = new System.Drawing.Point(0, 46);
+            this.cmbSorting.Name = "cmbSorting";
+            this.cmbSorting.Size = new System.Drawing.Size(85, 23);
+            this.cmbSorting.TabIndex = 0;
+            this.cmbSorting.SelectedIndex = 0;
+            this.cmbSorting.SelectedIndexChanged += new System.EventHandler(this.cmbSorting_SelectedIndexChanged);
             // 
             // lstTracks
             // 
@@ -212,6 +228,7 @@
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.Button btnUp;
         private System.Windows.Forms.Button btnDown;
+        private System.Windows.Forms.ComboBox cmbSorting;
         private System.Windows.Forms.ListView lstTracks;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;

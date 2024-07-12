@@ -186,6 +186,36 @@ namespace TeddyBench
             lstTracks.Select();
         }
 
+        private void cmbSorting_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateSorting();
+        }
+
+        private void UpdateSorting()
+        {
+            FileList = new List<Tuple<string, Id3Tag>>();
+
+            var fileTuples = FileNames.Select(f => new Tuple<string, Id3Tag>(f, GetTag(f)));
+
+            if (cmbSorting.SelectedIndex == 0)
+            {
+                foreach (Tuple<string, Id3Tag> item in fileTuples.OrderBy(i => (i.Item2 == null) ? int.MaxValue : i.Item2.Track.Value))
+                {
+                    FileList.Add(item);
+                }
+            }
+            else
+            {
+                foreach (Tuple<string, Id3Tag> item in fileTuples.OrderBy(i => i.Item1))
+                {
+                    FileList.Add(item);
+                }
+            }
+
+            UpdateView();
+        }
+
+
         private void RebuildFileList()
         {
             FileList = new List<Tuple<string, Id3Tag>>();
