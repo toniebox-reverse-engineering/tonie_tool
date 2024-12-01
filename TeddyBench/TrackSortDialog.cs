@@ -43,15 +43,10 @@ namespace TeddyBench
                 FileList.Add(item);
             }
 
-            UpdateView();
-            
-            // Store original column headers
-            originalColumnHeaders = new string[lstTracks.Columns.Count];
-            for (int i = 0; i < lstTracks.Columns.Count; i++)
-            {
-                originalColumnHeaders[i] = lstTracks.Columns[i].Text;
-            }
+            UpdateView();       
+        
         }
+
 
         private Id3Tag GetTag(string f)
         {
