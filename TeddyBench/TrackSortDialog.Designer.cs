@@ -51,6 +51,7 @@
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -149,7 +150,8 @@
             this.lstTracks.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
-            this.columnHeader3});
+            this.columnHeader3,
+            this.columnHeader4});
             this.lstTracks.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lstTracks.FullRowSelect = true;
             this.lstTracks.HideSelection = false;
@@ -164,6 +166,7 @@
             this.lstTracks.TabIndex = 0;
             this.lstTracks.UseCompatibleStateImageBehavior = false;
             this.lstTracks.View = System.Windows.Forms.View.Details;
+            this.lstTracks.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lstTracks_ColumnClick);
             // 
             // columnHeader1
             // 
@@ -178,6 +181,10 @@
             // 
             this.columnHeader3.Text = "ID3";
             this.columnHeader3.Width = 219;
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Track No.";
             // 
             // TrackSortDialog
             // 
@@ -216,5 +223,6 @@
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;
+        private System.Windows.Forms.ColumnHeader columnHeader4;
     }
 }

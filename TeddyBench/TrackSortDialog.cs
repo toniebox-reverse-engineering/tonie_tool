@@ -1,19 +1,25 @@
 ﻿using Id3;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace TeddyBench
 {
+
+
     public partial class TrackSortDialog : Form
     {
         private string[] FileNames;
+        private bool isAscending = false;
+        private string[] originalColumnHeaders;
         private List<Tuple<string, Id3Tag>> FileList = new List<Tuple<string, Id3Tag>>();
 
         public TrackSortDialog()
@@ -37,8 +43,10 @@ namespace TeddyBench
                 FileList.Add(item);
             }
 
-            UpdateView();
+            UpdateView();       
+        
         }
+
 
         private Id3Tag GetTag(string f)
         {
@@ -46,7 +54,8 @@ namespace TeddyBench
             {
                 Mp3 mp3 = new Mp3(f, Mp3Permissions.Read);
 
-                Id3Tag ret = mp3.GetAllTags().Where(t => t.Track.IsAssigned).FirstOrDefault();
+                //Id3Tag ret = mp3.GetAllTags().Where(t => t.Track.IsAssigned).FirstOrDefault();
+                Id3Tag ret = mp3.GetAllTags().FirstOrDefault();
 
                 return ret;
             }
@@ -68,13 +77,33 @@ namespace TeddyBench
                 lvi.Text = track.ToString();
 
                 string id3 = "";
+                string storedTrack = "";
 
                 if (item.Item2 != null)
                 {
-                    id3 = item.Item2.Artists + " - " + item.Item2.Title;
+                    string artist;
+                    if (item.Item2.Artists == null)
+                    {
+                        artist = Regex.Replace(item.Item2.Band, @"\0+$", "");
+                    } else
+                    {
+                        artist = Regex.Replace(item.Item2.Artists, @"\0+$", "");
+                    }
+
+                    id3 = artist + " - " + Regex.Replace(item.Item2.Title, @"\0+$", "");
+
+                    if (item.Item2.Track.IsAssigned)
+                    {
+                        storedTrack = item.Item2.Track.ToString();
+                    }
+
                 }
+
                 lvi.SubItems.Add(item.Item1);
                 lvi.SubItems.Add(id3);
+                lvi.SubItems.Add(item.Item2.Track);
+                // Set the ToolTip text to the full ID3 information
+                lvi.ToolTipText = id3;
 
                 lstTracks.Items.Add(lvi);
 
@@ -111,6 +140,8 @@ namespace TeddyBench
 
             int numberOfItems = lstTracks.Items.Count;
             List<object> selectedItems = new List<object>();
+            lstTracks.ListViewItemSorter = null;    // remove the sorting by column
+            isAscending = false;
 
             foreach (var item in lstTracks.SelectedItems)
             {
@@ -155,8 +186,11 @@ namespace TeddyBench
             {
                 return;
             }
+
             int numberOfItems = lstTracks.Items.Count;
             List<object> selectedItems = new List<object>();
+            lstTracks.ListViewItemSorter = null;    // remove the sorting by column
+            isAscending = false;
 
             foreach (var item in lstTracks.SelectedItems)
             {
@@ -197,5 +231,62 @@ namespace TeddyBench
                 FileList.Add((Tuple<string, Id3Tag>)item.Tag);
             }
         }
+
+        private void lstTracks_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            if (e.Column != 0) SortListView(e.Column);
+        }
+
+        private void SortListView(int columnIndex)
+        {
+            // Use ListViewItemComparer for sorting
+            lstTracks.ListViewItemSorter = new ListViewItemComparer(columnIndex, !isAscending);
+            lstTracks.Sort();
+            isAscending = !isAscending;
+            RebuildFileList();
+        }
+
+
     }
+
+    public class ListViewItemComparer : IComparer
+    {
+        private int columnIndex;
+        private bool ascending;
+
+        public ListViewItemComparer(int columnIndex, bool ascending)
+        {
+            this.columnIndex = columnIndex;
+            this.ascending = ascending;
+        }
+
+        public int Compare(object x, object y)
+        {
+            ListViewItem item1 = (ListViewItem)x;
+            ListViewItem item2 = (ListViewItem)y;
+
+            // Get the values based on the specified column
+            string value1 = item1.SubItems[columnIndex].Text;
+            string value2 = item2.SubItems[columnIndex].Text;
+
+            // Handle potential null values
+            if (value1 == null && value2 == null)
+            {
+                return 0; // Both values are null, consider them equal
+            }
+            else if (value1 == null)
+            {
+                return ascending ? 1 : -1; // Null value comes after non-null in ascending order
+            }
+            else if (value2 == null)
+            {
+                return ascending ? -1 : 1; // Null value comes before non-null in descending order
+            }
+
+            // Compare strings based on chosen order
+            int comparison = string.Compare(value1, value2, StringComparison.OrdinalIgnoreCase);
+            return ascending ? comparison : -comparison;
+        }
+    }
+
 }
