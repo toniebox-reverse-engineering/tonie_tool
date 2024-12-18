@@ -1,4 +1,5 @@
 ﻿using Id3;
+using NAudio.Wave;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -31,13 +32,32 @@ namespace TeddyBench
             base.OnLoad(e);
 
             var fileTuples = FileNames.Select(f => new Tuple<string, Id3Tag>(f, GetTag(f)));
+            TimeSpan totalTime = new TimeSpan(0L);
 
             foreach (Tuple<string, Id3Tag> item in fileTuples.OrderBy(i => (i.Item2 == null) ? int.MaxValue : i.Item2.Track.Value))
             {
                 FileList.Add(item);
+                
+                /* Calculate total length of MP3 file */
+                TimeSpan time = new MediaFoundationReader(item.Item1).TotalTime;
+                totalTime += time;
             }
+            
+            var h = (int)(totalTime.TotalMinutes / 60);
+            var m = (int)(totalTime.TotalMinutes % 60);
+            var s = (int)(totalTime.TotalSeconds % 60);
+            this.Text += " (Number of files: " + FileList.Count + ", Duration: " + $"{h:D2}:{m:D2}:{s:D2}" + ")";
 
-            UpdateView();
+            UpdateView();            
+            
+            if (FileList.Count > 99)
+            {
+                MessageBox.Show("A TAF file can not handle more than 99 tracks!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            else if (totalTime.TotalSeconds > 43200) /* 12h = 43200 = 60 * 60 * 12 */
+            {
+                MessageBox.Show("A TAF file can not handle more than 12h total playtime!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
 
         private Id3Tag GetTag(string f)
@@ -185,7 +205,7 @@ namespace TeddyBench
             RebuildFileList();
             lstTracks.Select();
         }
-
+        
         private void cmbSorting_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateSorting();
