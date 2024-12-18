@@ -131,7 +131,17 @@ namespace TeddyBench
                     return 1;
                 }
 
-                int returnVal = String.Compare(s1, s2);
+                int returnVal = 0;
+
+                if (Characteristic != 2)
+                {
+                    returnVal = String.Compare(s1, s2);
+                }
+                else
+                {
+                    // do not use the string representation to avoid wrong sort results
+                    returnVal = DateTime.Compare(t1.FileInfo.CreationTime, t2.FileInfo.CreationTime);
+                }
 
                 return (Order ? 1 : -1) * returnVal;
             }
